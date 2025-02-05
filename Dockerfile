@@ -7,7 +7,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 8001
 
 CMD ["python", "flask-app.py"]
 
