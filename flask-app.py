@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 
-from my_script import do_something
+from subprocess_caller import analyze_image
 
 app = Flask(__name__)
 
@@ -9,7 +9,7 @@ def process():
     data = request.json
 
     result = {
-        "output": do_something(data["text"])
+        "output": analyze_image(data["text"])
     }
     return jsonify(result)
 
