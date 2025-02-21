@@ -236,7 +236,7 @@ def create_figure(img, diff, unet, args, filename, slicenumber):
 
 def get_image(filename):
     img_name = os.path.join(
-            f'{ROOT_DIR}DATASETS/Train_ABMRI/', filename, f"{filename}_2000002_1.nii.gz"
+            f'{ROOT_DIR}DATASETS/Analyze/', filename, f"sub-{filename}_ses-NFB3_T1w.nii.gz"
     )
     # random between 40 and 130
     # print(nib.load(img_name).slicer[:,90:91,:].dataobj.shape)
@@ -273,8 +273,8 @@ def transform(img_size = [256, 256], custom_transform=None):
     
     return transforms.Compose([
         transforms.ToPILImage(),  # Convert to PIL Image
-        transforms.RandomAffine(3, translate=(0.02, 0.09)),  # Random affine transformation
-        transforms.CenterCrop(256),  # Center crop (may need adaptation)
+        # transforms.RandomAffine(3, translate=(0.02, 0.09)),  # Random affine transformation not needed for analyze
+        transforms.CenterCrop(235),  # Center crop (may need adaptation)
         transforms.Resize(img_size, transforms.InterpolationMode.BILINEAR),  # Resize to target size
         transforms.ToTensor(),  # Convert back to tensor
         transforms.Normalize((0.5,), (0.5,))  # Normalize values
@@ -325,8 +325,8 @@ def main():
     if slice_number == "all":
         image = get_image(image_filename)
         
-        for slice_idx in range(80):
-            image = image[:, :, slice_idx:slice_idx+1].astype(np.float32)
+        for slice_idx in range(40,100):
+            image = image[:, :, slice_idx:slice_idx+1].reshape(256, 192).astype(np.float32)
             
             x = transform([256, 256])(image)
             x = x.unsqueeze(0)
@@ -342,7 +342,7 @@ def main():
         # get the image
         image = get_image(image_filename)
         # get the correct slice
-        image = image[:, :, slice_number:slice_number+1].astype(np.float32)
+        image = image[:, :, slice_number:slice_number+1].reshape(256, 192).astype(np.float32)
         # transform image
         x = transform([256, 256])(image)  # Get the transform function
         # Ensure correct shape (B, C, H, W)
@@ -360,8 +360,7 @@ def main():
 
 if __name__ == '__main__':
     # get the device 
-    import torch_directml
-    device = torch_directml.device()
+    device = device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     main()
 
 

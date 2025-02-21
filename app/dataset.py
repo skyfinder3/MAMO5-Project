@@ -4,7 +4,7 @@ import numpy as np
 import nibabel as nib
 
 from random import randint
-
+from torch.utils.data import Dataset
 from torchvision import transforms
 
 class MRIDataset(Dataset):
